@@ -9,7 +9,6 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
 import java.io.IOException;
 import java.util.*;
 
@@ -18,16 +17,12 @@ public class Main {
         List<String> linkPool = new ArrayList<>();
         Set<String> handledPool = new HashSet<>();
 
-        //老师方法
         linkPool.add("https://sina.cn");
         while (!linkPool.isEmpty()) {
-
             String link = linkPool.remove(linkPool.size() - 1);
-
             if (handledPool.contains(link)) {
                 continue;
             }
-
             if (isInteresingLink(link)) {
                 //是新闻我们处理
 
@@ -39,13 +34,9 @@ public class Main {
 
                 handledPool.add(link);
 
-
             } else {
                 //不是新闻
-                continue;
             }
-
-
         }
     }
 
@@ -73,15 +64,6 @@ public class Main {
             return Jsoup.parse(EntityUtils.toString(entity1));
         }
     }
-
-//    private static String stringBuferProcessUrlNotHttps(String link, StringBuffer linkbuffer) {
-//        linkbuffer.append(link);
-//        linkbuffer.delete(0, linkbuffer.length());//删除
-//        if (linkbuffer.toString().startsWith("//")) {
-//            linkbuffer.insert(0, "https:");
-//        }
-//        return linkbuffer.toString();
-//    }
 
     private static String processUrlNotHttps(String link) {
         if (link.startsWith("//")) {
