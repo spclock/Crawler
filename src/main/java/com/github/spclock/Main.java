@@ -9,18 +9,30 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        List<String> linkPool = new ArrayList<>();
-        Set<String> handledPool = new HashSet<>();
+    private static H2Dao dao = new H2Dao("jdbc:h2:E:/test/Crawler/news");
 
-        linkPool.add("https://sina.cn");
-        while (!linkPool.isEmpty()) {
-            String link = linkPool.remove(linkPool.size() - 1);
-            if (handledPool.contains(link)) {
+    public static void main(String[] args) throws IOException, SQLException {
+//        List<String> linkPool = new ArrayList<>();
+//        Set<String> handledPool = new HashSet<>();
+//
+//        linkPool.add("https://sina.cn");
+
+
+        while (!dao.judgeLinkIsNull()) {
+
+//            String link = linkPool.remove(linkPool.size() - 1);
+            String link = dao.getNotProcessedLinkThenDelete();
+
+
+//            if (handledPool.contains(link)) {
+            if (dao.linkIsProcessed(link)) {
                 continue;
             }
             if (isInteresingLink(link)) {
@@ -28,11 +40,16 @@ public class Main {
 
                 Document doc = getHttpResponseEntity(link);
 
-                doc.select("a").stream().map(aTag -> aTag.attr("href")).forEach(linkPool::add);
+                for (Element aTag : doc.select("a")) {
+                    String href = aTag.attr("href");
+//                    linkPool.add(href);
+                    dao.addNotProcessLink(href);
+                }
 
-                AddIsNewPageToDB(doc);
+                AddIsNewPageToDB(doc, link);
 
-                handledPool.add(link);
+                dao.addProcessedLink(link);
+//                handledPool.add(link);
 
             } else {
                 //不是新闻
@@ -40,10 +57,13 @@ public class Main {
         }
     }
 
-    private static void AddIsNewPageToDB(Document doc) {
+    private static void AddIsNewPageToDB(Document doc, String link) throws SQLException {
         ArrayList<Element> articleTags = doc.select("article");
         if (!articleTags.isEmpty()) {
             for (Element articleTag : articleTags) {
+                String title = articleTag.child(0).text();
+                String content = articleTag.select("p").stream().map(Element::text).collect(Collectors.joining("\n"));
+                dao.addNewPage(link, title, content);
                 System.out.println("title" + articleTag.child(0).text());
             }
         }
@@ -58,7 +78,7 @@ public class Main {
         httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36");
 
         try (CloseableHttpResponse response1 = httpclient.execute(httpGet)) {
-            System.out.println(response1.getStatusLine());
+//            System.out.println(response1.getStatusLine());
             System.out.println(link);
             HttpEntity entity1 = response1.getEntity();
             return Jsoup.parse(EntityUtils.toString(entity1));
@@ -73,13 +93,13 @@ public class Main {
     }
 
     private static boolean isInteresingLink(String link) {
-        return isNotLoginPage(link) && isNotSpecialPage(link)
+        return isNotLoginPage(link) && notSpecialPage(link)
                 && (isNewPage(link) || isIndexPage(link));
     }
 
-    private static boolean isNotSpecialPage(String link) {
+    private static boolean notSpecialPage(String link) {
         //例子：  https:\/\/news.sina.cn\/news_zt\/keyword.d.html?k=王毅
-        return !link.contains("keyword.d.html");
+        return !link.contains("javascript");
     }
 
     private static boolean isNewPage(String link) {
