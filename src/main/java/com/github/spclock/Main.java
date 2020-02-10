@@ -16,44 +16,31 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
-    private static H2Dao dao = new H2Dao("jdbc:h2:E:/test/Crawler/news");
+    private static MybatisDao dao = new MybatisDao();
 
     public static void main(String[] args) throws IOException, SQLException {
-//        List<String> linkPool = new ArrayList<>();
-//        Set<String> handledPool = new HashSet<>();
-//
-//        linkPool.add("https://sina.cn");
 
+        String link;
+        while ((link = dao.getNotProcessedLinkThenDelete()) != null) {
 
-        while (!dao.judgeLinkIsNull()) {
-
-//            String link = linkPool.remove(linkPool.size() - 1);
-            String link = dao.getNotProcessedLinkThenDelete();
-
-
-//            if (handledPool.contains(link)) {
             if (dao.linkIsProcessed(link)) {
                 continue;
             }
             if (isInteresingLink(link)) {
                 //是新闻我们处理
-
                 Document doc = getHttpResponseEntity(link);
 
                 for (Element aTag : doc.select("a")) {
                     String href = aTag.attr("href");
-//                    linkPool.add(href);
-                    dao.addNotProcessLink(href);
+                    dao.insertNotProcessLink(href);
                 }
 
                 AddIsNewPageToDB(doc, link);
 
-                dao.addProcessedLink(link);
-//                handledPool.add(link);
+                dao.insertProcessedLink(link);
 
-            } else {
-                //不是新闻
             }
+
         }
     }
 
@@ -63,7 +50,7 @@ public class Main {
             for (Element articleTag : articleTags) {
                 String title = articleTag.child(0).text();
                 String content = articleTag.select("p").stream().map(Element::text).collect(Collectors.joining("\n"));
-                dao.addNewPage(link, title, content);
+                dao.insertNewPage(link, title, content);
                 System.out.println("title" + articleTag.child(0).text());
             }
         }
@@ -78,7 +65,6 @@ public class Main {
         httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36");
 
         try (CloseableHttpResponse response1 = httpclient.execute(httpGet)) {
-//            System.out.println(response1.getStatusLine());
             System.out.println(link);
             HttpEntity entity1 = response1.getEntity();
             return Jsoup.parse(EntityUtils.toString(entity1));
