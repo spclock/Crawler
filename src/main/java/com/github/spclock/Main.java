@@ -16,12 +16,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
+
     private static MybatisDao dao = new MybatisDao();
 
     public static void main(String[] args) throws IOException, SQLException {
 
         String link;
         while ((link = dao.getNotProcessedLinkThenDelete()) != null) {
+
 
             if (dao.linkIsProcessed(link)) {
                 continue;
@@ -32,7 +34,9 @@ public class Main {
 
                 for (Element aTag : doc.select("a")) {
                     String href = aTag.attr("href");
+
                     dao.insertNotProcessLink(href);
+
                 }
 
                 AddIsNewPageToDB(doc, link);
@@ -50,7 +54,9 @@ public class Main {
             for (Element articleTag : articleTags) {
                 String title = articleTag.child(0).text();
                 String content = articleTag.select("p").stream().map(Element::text).collect(Collectors.joining("\n"));
+
                 dao.insertNewPage(link, title, content);
+
                 System.out.println("title" + articleTag.child(0).text());
             }
         }
@@ -65,6 +71,7 @@ public class Main {
         httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36");
 
         try (CloseableHttpResponse response1 = httpclient.execute(httpGet)) {
+
             System.out.println(link);
             HttpEntity entity1 = response1.getEntity();
             return Jsoup.parse(EntityUtils.toString(entity1));
