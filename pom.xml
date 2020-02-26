@@ -130,7 +130,8 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>6.2.1</version>
                 <configuration>
-                    <url>jdbc:h2:file:e:/test/Crawler/news</url>
+<!--                    文件的通配符问题，我这个是写死了-->
+                    <url>jdbc:h2:file:e:/crawler/news</url>
                     <user>root</user>
                     <password>root</password>
                 </configuration>

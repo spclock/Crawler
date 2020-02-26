@@ -8,6 +8,12 @@
 ```bash
 mvn flyway:migrate
 ```
+```xml
+<!-- 注意：文件的通配符问题，我这个是写死了-->
+<url>jdbc:h2:file:e:/crawler/news</url>
+```
+
+
 
 如果你想修改代码，提交建议请通过我们的检查测试
 1. checkstyle
