@@ -33,7 +33,7 @@ public class JdbcDao implements CrawlerDao {
 
 
     @Override
-    public String getNotProcessedLinkThenDelete() throws SQLException {
+    public synchronized String getNotProcessedLinkThenDelete() throws SQLException {
         String link = getNotProcessedLink("select * from LINKS_TO_BE_PROCESSED");
         try (PreparedStatement statement = connection.prepareStatement("delete from LINKS_TO_BE_PROCESSED where LINK = ?")) {
             statement.setString(1, link);
