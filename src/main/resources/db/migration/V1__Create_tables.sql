@@ -1,5 +1,5 @@
-create table LINKS_TO_BE_PROCESSED ( link varchar (1000));
-create table LINKS_ALREADY_PROCESSED ( link varchar (1000));
+create table LINKS_TO_BE_PROCESSED ( link varchar (1000))ENGINE=InnoDB ;
+create table LINKS_ALREADY_PROCESSED ( link varchar (1000))ENGINE=InnoDB ;
 
 create table NEWS (
 id bigint primary key auto_increment,

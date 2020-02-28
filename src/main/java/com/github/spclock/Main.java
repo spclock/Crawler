@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class Main {
 
     private static MybatisDao dao = new MybatisDao();
+//private static CrawlerDao dao = new JdbcDao();
 
     public static void main(String[] args) throws IOException, SQLException {
 
@@ -34,7 +35,6 @@ public class Main {
 
                 for (Element aTag : doc.select("a")) {
                     String href = aTag.attr("href");
-
                     dao.insertNotProcessLink(href);
 
                 }

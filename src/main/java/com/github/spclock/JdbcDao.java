@@ -7,11 +7,15 @@ import java.sql.*;
 
 public class JdbcDao implements CrawlerDao {
     private Connection connection;
+    private final static String USER_NAME="root";
+    private final static String PASSWORD="root";
+    private final static String JDBC_URL="jdbc:h2:file:e:/crawler/news";
+
 
     @SuppressFBWarnings("DMI_CONSTANT_DB_PASSWORD")
-    public JdbcDao(String jdbcUrl) {
+    public JdbcDao() {
         try {
-            connection = DriverManager.getConnection(jdbcUrl, "root", "root");
+            connection = DriverManager.getConnection(JDBC_URL, USER_NAME, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
         }
