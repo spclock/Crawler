@@ -7,9 +7,9 @@ import java.sql.*;
 
 public class JdbcDao implements CrawlerDao {
     private Connection connection;
-    private final static String USER_NAME="root";
-    private final static String PASSWORD="root";
-    private final static String JDBC_URL="jdbc:h2:file:e:/crawler/news";
+    private static final String USER_NAME="root";
+    private static final String PASSWORD="root";
+    private static final String JDBC_URL="jdbc:h2:file:e:/crawler/news";
 
 
     @SuppressFBWarnings("DMI_CONSTANT_DB_PASSWORD")
