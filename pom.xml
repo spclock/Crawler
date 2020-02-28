@@ -56,15 +56,17 @@
             <version>3.0.1</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
             <version>3.5.4</version>
         </dependency>
 
-
-
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.19</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -130,17 +132,19 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>6.2.1</version>
                 <configuration>
-                    <url>jdbc:h2:file:e:/test/Crawler/news</url>
+<!--                    文件的通配符问题，我这个是写死了-->
+<!--                    <url>jdbc:h2:file:e:/crawler/news</url>-->
+                    <url>jdbc:mysql://192.168.99.100:3306/news?useUnicode=true&amp;characterEncoding=UTF-8</url>
                     <user>root</user>
                     <password>root</password>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <version>1.4.200</version>
-                    </dependency>
-                </dependencies>
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>com.h2database</groupId>-->
+<!--                        <artifactId>h2</artifactId>-->
+<!--                        <version>1.4.200</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
             </plugin>
         </plugins>
 
