@@ -29,7 +29,7 @@ public class MybatisDao implements CrawlerDao {
 
 
     @Override
-    public String getNotProcessedLinkThenDelete() {
+    public synchronized String getNotProcessedLinkThenDelete() {
         try (SqlSession session = sqlSessionFactory.openSession(true)) {
             String url = session.selectOne("com.github.spclock.MyMapper.selectNextAvailableLink");
             if (url != null) {
